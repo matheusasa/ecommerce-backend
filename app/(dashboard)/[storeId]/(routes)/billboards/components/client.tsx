@@ -6,7 +6,8 @@ import { Separator } from "@/components/ui/separator"
 
 import { Plus } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { BillboardsColumn } from "./columns"
+import { BillboardsColumn, columns } from "./columns"
+import { DataTable } from "@/components/ui/data-table"
 
 interface BillboardClientProps{
     data:BillboardsColumn[]
@@ -30,6 +31,7 @@ export const BillboardClient :React.FC<BillboardClientProps>= ({
                 </Button>
             </div>
             <Separator />
+            <DataTable searchKey="label" columns={columns} data ={data}/>
             
         </>
     )
