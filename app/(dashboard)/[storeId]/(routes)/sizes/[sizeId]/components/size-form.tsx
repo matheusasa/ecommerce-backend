@@ -7,8 +7,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { Billboard } from "@prisma/client"
+import { Size } from "@prisma/client"
 import { useParams, useRouter } from "next/navigation"
+
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,17 +26,17 @@ import { AlertModal } from "@/components/modals/alert-modal"
 import ImageUpload from "@/components/ui/image-upload"
 
 const formSchema = z.object({
-  label: z.string().min(1),
-  imageUrl: z.string().min(1),
+  name: z.string().min(1),
+  value: z.string().min(1),
 });
 
-type BillboardFormValues = z.infer<typeof formSchema>
+type SizeFormValues = z.infer<typeof formSchema>
 
-interface BillboardFormProps {
-  initialData: Billboard | null;
+interface SizeFormProps {
+  initialData: Size | null;
 };
 
-export const BillboardForm: React.FC<BillboardFormProps> = ({
+export const SizeForm: React.FC<SizeFormProps> = ({
   initialData
 }) => {
   const params = useParams();
@@ -44,29 +45,29 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Editar billboard' : 'Criar billboard';
-  const description = initialData ? 'Editar um billboard.' : 'Adicioanr um billboard';
-  const toastMessage = initialData ? 'Billboard updated.' : 'Billboard criado.';
+  const title = initialData ? 'Editar tamanho' : 'Criar tamanho';
+  const description = initialData ? 'Editar um tamanho.' : 'Adicionar um tamanho';
+  const toastMessage = initialData ? 'Tamanho atualizado.' : 'Tamanho criado.';
   const action = initialData ? 'Salvar mudancas' : 'Criar';
 
-  const form = useForm<BillboardFormValues>({
+  const form = useForm<SizeFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      label: '',
-      imageUrl: ''
+      name: '',
+      value: ''
     }
   });
 
-  const onSubmit = async (data: BillboardFormValues) => {
+  const onSubmit = async (data: SizeFormValues) => {
     try {
       setLoading(true);
       if (initialData) {
-        await axios.patch(`/api/${params.storeId}/billboards/${params.billboardId}`, data);
+        await axios.patch(`/api/${params.storeId}/sizes/${params.sizeId}`, data);
       } else {
-        await axios.post(`/api/${params.storeId}/billboards`, data);
+        await axios.post(`/api/${params.storeId}/sizes`, data);
       }
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
+      router.push(`/${params.storeId}/sizes`);
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Something went wrong.');
@@ -78,12 +79,12 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/billboards/${params.billboardId}`);
+      await axios.delete(`/api/${params.storeId}/sizes/${params.sizeId}`);
       router.refresh();
-      router.push(`/${params.storeId}/billboards`);
-      toast.success('Billboard deletada.');
+      router.push(`/${params.storeId}/sizes`);
+      toast.success('Tamanho deletado.');
     } catch (error: any) {
-      toast.error('Tenha certeza que voce removeu todas as categorias desse billboard.');
+      toast.error('Tenha certeza que voce removeu todos os produtos desse tamanho.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -98,7 +99,7 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       onConfirm={onDelete}
       loading={loading}
     />
-    <div className="flex items-center justify-between">
+     <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {initialData && (
           <Button
@@ -114,33 +115,28 @@ export const BillboardForm: React.FC<BillboardFormProps> = ({
       <Separator />
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
-          <FormField
+          <div className="md:grid md:grid-cols-3 gap-8">
+            <FormField
               control={form.control}
-              name="imageUrl"
+              name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Background image</FormLabel>
+                  <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <ImageUpload
-                      value={field.value ? [field.value] : []}
-                      disabled={loading}
-                      onChange={(url) => field.onChange(url)}
-                      onRemove={() => field.onChange('')}
-                    />
+                    <Input disabled={loading} placeholder="Nome do tamanho" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-          <div className="md:grid md:grid-cols-3 gap-8">
             <FormField
               control={form.control}
-              name="label"
+              name="value"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Label</FormLabel>
+                  <FormLabel>Valor</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Billboard label" {...field} />
+                    <Input disabled={loading} placeholder="Valor do tamanho" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

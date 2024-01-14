@@ -7,7 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "react-hot-toast"
 import { Trash } from "lucide-react"
-import { BillBoard, Category } from "@prisma/client"
+import { Billboard, Category } from '@prisma/client';
 import { useParams, useRouter } from "next/navigation"
 
 import { Input } from "@/components/ui/input"
@@ -23,6 +23,7 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 //import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 const formSchema = z.object({
@@ -34,7 +35,7 @@ type CategoryFormValues = z.infer<typeof formSchema>
 
 interface CategoryFormProps {
   initialData: Category | null;
-  billboards: BillBoard[];
+  billboards: Billboard[];
 };
 
 export const CategoryForm: React.FC<CategoryFormProps> = ({
@@ -47,10 +48,10 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const title = initialData ? 'Edit category' : 'Create category';
-  const description = initialData ? 'Edit a category.' : 'Add a new category';
-  const toastMessage = initialData ? 'Category updated.' : 'Category created.';
-  const action = initialData ? 'Save changes' : 'Create';
+  const title = initialData ? 'Editar uma categoria' : 'Criar categoria';
+  const description = initialData ? 'Editar uma categoria.' : 'Adicionar uma nova categoria';
+  const toastMessage = initialData ? 'Categoria atualizada.' : 'Categoria criada.';
+  const action = initialData ? 'Salvar mudancas' : 'Criar';
 
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(formSchema),
@@ -123,16 +124,47 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Name</FormLabel>
+                  <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Category name" {...field} />
+                    <Input disabled={loading} placeholder="Nome da categoria" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-           
-            
+            <FormField
+              control={form.control}
+              name="billboardId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Billboard</FormLabel>
+                  <Select
+                  disabled={loading}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                        defaultValue={field.value}
+                        placeholder="Selecione um billboard"/>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {billboards.map((billboard)=>(
+                        <SelectItem 
+                        key={billboard.id}
+                        value={billboard.id}>
+                          {billboard.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
           <Button disabled={loading} className="ml-auto" type="submit">
             {action}

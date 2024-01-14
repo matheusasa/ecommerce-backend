@@ -6,15 +6,15 @@ import { Separator } from "@/components/ui/separator"
 
 import { Plus } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import {  CategoryColumn, columns } from "./columns"
+import { ColorColumn, columns } from "./columns"
 import { DataTable } from "@/components/ui/data-table"
 import { ApiList } from "@/components/ui/api-list"
 
-interface CategoryClientProps{
-    data:CategoryColumn[]
+interface ColorClientProps{
+    data:ColorColumn[]
 }
 
-export const CategoryClient :React.FC<CategoryClientProps>= ({
+export const ColorClient :React.FC<ColorClientProps>= ({
     data
 }) => {
     const router = useRouter();
@@ -24,18 +24,18 @@ export const CategoryClient :React.FC<CategoryClientProps>= ({
         <>
             <div className="flex items-center justify-between">
                 <Heading
-                    title={`Categorias(${data.length})`}
-                    description="Gerencie as categorias da sua loja." />
-                <Button onClick={() => router.push(`/${params.storeId}/categories/new`)}>
+                    title={`Cores(${data.length})`}
+                    description="Gerencie as cores para sua loja." />
+                <Button onClick={() => router.push(`/${params.storeId}/colors/new`)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Adicionar Novo
                 </Button>
             </div>
             <Separator />
             <DataTable searchKey="name" columns={columns} data ={data}/>
-            <Heading title="API" description="API para chamar as Categorias"/>
+            <Heading title="API" description="API para chamar as cores"/>
             <Separator/>
-            <ApiList entityName="categories" entityIdName="categoryId"/>
+            <ApiList entityName="colors" entityIdName="colorId"/>
         </>
     )
 }

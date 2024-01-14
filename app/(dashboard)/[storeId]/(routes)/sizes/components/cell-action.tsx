@@ -16,10 +16,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AlertModal } from "@/components/modals/alert-modal";
 
-import { CategoryColumn } from "./columns";
+import { SizeColumn } from "./columns";
 
 interface CellActionProps {
-  data: CategoryColumn;
+  data: SizeColumn;
 }
 
 export const CellAction: React.FC<CellActionProps> = ({
@@ -33,12 +33,12 @@ export const CellAction: React.FC<CellActionProps> = ({
   const onConfirm = async () => {
     try {
       setLoading(true);
-      await axios.delete(`/api/${params.storeId}/categories/${data.id}`);
-      toast.success("Categoria deletada.");
+      await axios.delete(`/api/${params.storeId}/sizes/${data.id}`);
+      toast.success("Tamanho deletado.");
       router.refresh();
-      router.push(`/${params.storeId}/categories`)
+      router.push(`/${params.storeId}/sizes`)
     } catch (error) {
-        toast.error('Tenha certeza que você removeu todos os produtos que estao nessa categoria.');
+        toast.error('Tenha certeza que você removeu todos os produtos que estão usando esse tamanho.');
     } finally {
       setOpen(false);
       setLoading(false);
@@ -47,7 +47,7 @@ export const CellAction: React.FC<CellActionProps> = ({
 
   const onCopy = (id: string) => {
     navigator.clipboard.writeText(id);
-    toast.success('Category ID copiado para area de transferencia.');
+    toast.success('Size ID copiado para area de transferencia!.');
   }
 
   return (
@@ -73,7 +73,7 @@ export const CellAction: React.FC<CellActionProps> = ({
             <Copy className="mr-2 h-4 w-4" /> Copiar Id
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/${params.storeId}/categories/${data.id}`)}
+            onClick={() => router.push(`/${params.storeId}/sizes/${data.id}`)}
           >
             <Edit className="mr-2 h-4 w-4" /> Atualizar
           </DropdownMenuItem>
