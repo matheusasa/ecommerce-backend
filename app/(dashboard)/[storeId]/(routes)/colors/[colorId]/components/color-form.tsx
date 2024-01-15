@@ -25,8 +25,10 @@ import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
 
 const formSchema = z.object({
-  name: z.string().min(1),
-  value: z.string().min(1),
+  name: z.string().min(2),
+  value: z.string().min(4).max(9).regex(/^#/, {
+    message: 'Tem que ser um codigo hex valido'
+  }),
 });
 
 type ColorFormValues = z.infer<typeof formSchema>
@@ -45,15 +47,14 @@ export const ColorForm: React.FC<ColorFormProps> = ({
   const [loading, setLoading] = useState(false);
 
   const title = initialData ? 'Editar cor' : 'Criar cor';
-  const description = initialData ? 'Editar uma cor.' : 'Adicionar uma cor';
-  const toastMessage = initialData ? 'Cor atualizado.' : 'Cor criada.';
+  const description = initialData ? 'Editar uam cor.' : 'Adicionar uma nova cor';
+  const toastMessage = initialData ? 'Cor atualizada.' : 'Cor criada.';
   const action = initialData ? 'Salvar mudancas' : 'Criar';
 
   const form = useForm<ColorFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: initialData || {
-      name: '',
-      value: ''
+      name: ''
     }
   });
 
@@ -65,8 +66,8 @@ export const ColorForm: React.FC<ColorFormProps> = ({
       } else {
         await axios.post(`/api/${params.storeId}/colors`, data);
       }
-      router.refresh();
       router.push(`/${params.storeId}/colors`);
+      router.refresh();
       toast.success(toastMessage);
     } catch (error: any) {
       toast.error('Aconteceu algo de errado.');
@@ -81,9 +82,9 @@ export const ColorForm: React.FC<ColorFormProps> = ({
       await axios.delete(`/api/${params.storeId}/colors/${params.colorId}`);
       router.refresh();
       router.push(`/${params.storeId}/colors`);
-      toast.success('Cor deletada.');
+      toast.success('Color deleted.');
     } catch (error: any) {
-      toast.error('Tenha certeza que voce removeu todos os produtos dessa cor.');
+      toast.error('Tenha certeza que voce excluiu todos os produtos com essa cor.');
     } finally {
       setLoading(false);
       setOpen(false);
@@ -92,8 +93,8 @@ export const ColorForm: React.FC<ColorFormProps> = ({
 
   return (
     <>
-    <AlertModal
-      isOpen={open}
+    <AlertModal 
+      isOpen={open} 
       onClose={() => setOpen(false)}
       onConfirm={onDelete}
       loading={loading}
@@ -122,7 +123,7 @@ export const ColorForm: React.FC<ColorFormProps> = ({
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Nome do tamanho" {...field} />
+                    <Input disabled={loading} placeholder="Color name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -135,7 +136,13 @@ export const ColorForm: React.FC<ColorFormProps> = ({
                 <FormItem>
                   <FormLabel>Valor</FormLabel>
                   <FormControl>
-                    <Input disabled={loading} placeholder="Valor do tamanho" {...field} />
+                    <div className="flex items-center gap-x-4">
+                      <Input disabled={loading} placeholder="Color value" {...field} />
+                      <div 
+                        className="border p-4 rounded-full" 
+                        style={{ backgroundColor: field.value }}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
