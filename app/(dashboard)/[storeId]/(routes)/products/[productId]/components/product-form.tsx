@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,6 +25,7 @@ import { Heading } from "@/components/ui/heading"
 import { AlertModal } from "@/components/modals/alert-modal"
 import ImageUpload from "@/components/ui/image-upload"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -48,7 +50,10 @@ interface ProductFormProps {
 };
 
 export const ProductForm: React.FC<ProductFormProps> = ({
-  initialData
+  initialData,
+  categories,
+  colors,
+  sizes,
 }) => {
   const params = useParams();
   const router = useRouter();
@@ -185,7 +190,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
               name="categoryId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Billboard</FormLabel>
+                  <FormLabel>Categorias</FormLabel>
                   <Select
                   disabled={loading}
                   onValueChange={field.onChange}
@@ -196,7 +201,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                       <SelectTrigger>
                         <SelectValue
                         defaultValue={field.value}
-                        placeholder="Selecione um billboard"/>
+                        placeholder="Selecione uma categoria"/>
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -210,6 +215,93 @@ export const ProductForm: React.FC<ProductFormProps> = ({
                     </SelectContent>
                   </Select>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="sizeId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tamanho</FormLabel>
+                  <Select
+                  disabled={loading}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                        defaultValue={field.value}
+                        placeholder="Selecione um tamanho"/>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {sizes.map((size)=>(
+                        <SelectItem
+                        key={size.id}
+                        value={size.id}>
+                          {size.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="colorId"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Cor</FormLabel>
+                  <Select
+                  disabled={loading}
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue
+                        defaultValue={field.value}
+                        placeholder="Selecione uma cor"/>
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {colors.map((color)=>(
+                        <SelectItem
+                        key={color.id}
+                        value={color.id}>
+                          {color.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="isFeatured"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4">
+                  <FormControl>
+                    <Checkbox 
+                    checked={field.value}
+                    onCheckedChange={field.onChange}/>
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Lancamento
+                    </FormLabel>
+                    <FormDescription>
+                      Esse produto vai aparecer na homepage
+                    </FormDescription>
+                  </div>
                 </FormItem>
               )}
             />
